@@ -12,3 +12,6 @@ class User(db.Model):
 
     def __str__(self) -> str:
         return f'{self.email}'
+    
+    def serialize(self):
+        return {"email": self.email}

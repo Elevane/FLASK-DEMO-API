@@ -1,13 +1,15 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from utils.http_helpers import *
 from utils.auth_helpers import *
 from flask_sqlalchemy import SQLAlchemy
-from utils.security_helpers import hash_password, check_pw
+from utils.security_helpers import *
 from entities.models import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost/rspublisher'
 db.init_app(app)
+
+
 
 @app.route('/login', methods=["POST"])
 @http_post
@@ -19,7 +21,8 @@ def login():
     good_password = check_pw(data["password"], existing_user.password)
     if not good_password:
         return bad_request(f'Wrong credentials .')
-    return f'Hello, World! {str(existing_user)}'
+    token = generate_token(existing_user)
+    return ok({"jwt_token" : token})
 
 @app.route('/register', methods=["POST"])
 def register():
@@ -27,7 +30,8 @@ def register():
     new_user = User(email=data["email"], password=hash_password(data["password"]))
     db.session.add(new_user)
     db.session.commit()
-    return 'Hello, World!'
+    token = generate_token(new_user)
+     return ok({"jwt_token" : token})
 
 @app.route('/', methods=["GET"])
 @secured_route
