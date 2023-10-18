@@ -31,7 +31,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
     token = generate_token(new_user)
-     return ok({"jwt_token" : token})
+    return ok({"jwt_token" : token})
 
 @app.route('/', methods=["GET"])
 @secured_route
