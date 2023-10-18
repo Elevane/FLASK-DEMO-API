@@ -4,11 +4,13 @@ from utils.auth_helpers import *
 from flask_sqlalchemy import SQLAlchemy
 from utils.security_helpers import *
 from entities.models import *
+import os
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost/rspublisher'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("MYSQL_COSTR")
+app.secret_key = os.getenv("APP_SCRT_KEY")
 db.init_app(app)
-
 
 
 @app.route('/login', methods=["POST"])
@@ -36,7 +38,7 @@ def register():
 @app.route('/', methods=["GET"])
 @secured_route
 def home():
-    return 'secured route'
+    return f'secured route {session["user"]}'
 
 
 if __name__ == '__main__':
