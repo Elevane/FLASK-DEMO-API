@@ -29,6 +29,9 @@ def login():
 @app.route('/register', methods=["POST"])
 def register():
     data = request.get_json()
+    existing_user = User.query.filter_by(email=data["email"]).first()
+    if existing_user:
+        return bad_request(f'User already exist')
     new_user = User(email=data["email"], password=hash_password(data["password"]))
     db.session.add(new_user)
     db.session.commit()
