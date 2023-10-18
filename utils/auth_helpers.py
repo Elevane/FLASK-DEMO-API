@@ -4,14 +4,15 @@ import jwt
 import os
 import datetime
 
+
 SECRET_KEY = os.getenv("SECURITY_SCRRRT_KEY")
+
 
 def secured_route(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not request.headers.get('Authorization'):
             return Response('Unauthorized route', status=401, mimetype="application/json")    
-        ##print(request.headers.get('Authorization'))
         token = request.headers.get('Authorization').split("Bearer")[1]
         data = jwt.decode(jwt=token, key=SECRET_KEY, options={"verify_signature": False})
         print(data["user"]["role"])
